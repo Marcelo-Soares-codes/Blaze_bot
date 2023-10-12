@@ -139,7 +139,7 @@ def verific_win(color, signal, gale):
 url = "https://blaze.com/api/roulette_games"
 list = []
 
-with open('Blaze_bot\patterns.json', 'r') as arquivo_json:
+with open('patterns.json', 'r') as arquivo_json:
     dados = json.load(arquivo_json)
 
 black_paterns = dados['black']
