@@ -19,6 +19,7 @@ def wait(max_attempts=20, retry_delay=1.5):
     for _ in range(max_attempts):
         try:
             response = requests.get(url + "/current")
+            print(response)
             response_data = response.json()
 
             if response.status_code == 200:
