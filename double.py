@@ -3,21 +3,23 @@
 fará uma analise a partir de padrões pré selecionados, logo após enviara uma menssagem de alerta
 no canal/grupo do telegram indicando a cor que devera ser relizada a entra, por fim indicará se foi vitoria ou não!
 """
-from os import system as sys
-import requests
-import cloudscraper
-import time
-import json
-import telebot
-
-cds = cloudscraper.create_scraper()
+try:
+    from os import system as sys
+    import requests
+    import time
+    import json
+    import telebot
+except:
+    print("------- INSTALANDO DEPENDÊNCIAS -------")
+    sys("pip install requests==2.20.1")
+    sys("pip install telebot==0.0.4")
 
 
 def wait(max_attempts=20, retry_delay=1.5):
     for _ in range(max_attempts):
         try:
-            response = cds.get(url + "/current")
-            print(response.json())
+            response = requests.get(url + "/current")
+            print(response)
             response_data = response.json()
 
             if response.status_code == 200:
@@ -27,8 +29,7 @@ def wait(max_attempts=20, retry_delay=1.5):
                     return response_data
             time.sleep(retry_delay)
 
-        except Exception as e:
-            print(e)
+        except requests.exceptions.RequestException as e:
             time.sleep(retry_delay)
 
     print("Limite de tentativas atingido. Não foi possível aguardar um resultado.")
@@ -38,7 +39,7 @@ def wait_rolling(max_attempts=20, retry_delay=1.5):
     wait()
     for _ in range(max_attempts):
         try:
-            response = cds.get(url + "/current")
+            response = requests.get(url + "/current")
             response_data = response.json()
 
             if response.status_code == 200:
@@ -48,7 +49,7 @@ def wait_rolling(max_attempts=20, retry_delay=1.5):
                     return response_data
             time.sleep(retry_delay)
 
-        except Exception as e:
+        except requests.exceptions.RequestException as e:
             time.sleep(retry_delay)
 
     print("Limite de tentativas atingido. Não foi possível aguardar um resultado.")
@@ -139,7 +140,7 @@ def verific_win(color, signal, gale):
 url = "https://blaze.com/api/roulette_games"
 list = []
 
-with open('Blaze_bot\patterns.json', 'r') as arquivo_json:
+with open('patterns.json', 'r') as arquivo_json:
     dados = json.load(arquivo_json)
 
 black_paterns = dados['black']
@@ -151,7 +152,9 @@ chat_free = "5065618545"
 bot_free = False
 signal = False
 
+
 bot.send_message(chat, "BOT ON")
+print("BOT ON")
 while True:
     if signal:
         send_signal(signal, last_result["roll"], last_cor)
